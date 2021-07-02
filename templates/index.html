@@ -1,5 +1,55 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>hello world</h1>
+{% if request.user.is_authenticated %}
+<div class="row mt">
+  <div class="col-lg-12">
+    <div class="row content-panel">
+      <div class="col-md-4 profile-text mt mb centered">
+        <div class="right-divider hidden-sm hidden-xs">
+          <h4>{{user.st_id}}</h4>
+          <h6>员工编号</h6>
+          <h4>{{user.get_depart_display }}</h4>
+          <h6>{{user.job}}</h6>
+          <h4>{{user.last_login}}</h4>
+          <h6>上次登录</h6>
+        </div>
+      </div>
+      <!-- /col-md-4 -->
+      <div class="col-md-4 profile-text">
+        <h3>{{user.username}}</h3>
+        <h5>您已入职{{ passed }}</h5>
+        <br>
+      </div>
+    </div>
+  </div>
+</div>
+{%else%}
+<br>
+<div class="row content-panel">
+  <h2 class="centered">简要介绍</h2>
+  <div class="col-md-10 col-md-offset-1 mt mb">
+    <div class="accordion" id="accordion2">
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse"  >
+          </a>
+        </div>
+        <div id="collapseOne" class="accordion-body collapse in">
+          <div class="accordion-inner">
+            <p>
+              本系统是针对各中小型超市开发的进销存管理系统，主要实现超市的商品信息管理、进货管理、销售管理、库存管理、员工信息管理、供货商管理功能。在超市管理中引进现代化的办公软件，实现超市商品信息的处理，从而方便管理人员的决策和管理，解除后顾之忧。在设计上体现了人性化和“以人为本”的精神。界面设计上亲切友好，简单直观，便于操作。
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- end accordion -->
+  </div>
+  <!-- col-md-10 -->
+</div>
+{%endif%}
+</div>
+
 {% endblock %}

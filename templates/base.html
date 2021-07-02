@@ -51,7 +51,12 @@
     <div id="sidebar" class="nav-collapse " tabindex="5000" style="overflow: hidden; outline: none;">
       <!-- sidebar menu start-->
       <ul class="sidebar-menu" id="nav-accordion">
-        <h5 class="centered">详细面板</h5>
+        <h5 class="centered">
+          {% if request.user.is_authenticated %}
+          目前登录：{{user.username}}
+          {% else %}
+          请登录
+          {% endif %}</h5>
         <li class="mt">
           <a href="{%url 'index'%}">
             <span>首页</span>
@@ -129,7 +134,7 @@
             <span>员工页面</span>
             <span class="dcjq-icon"></span></a>
         </li>
-        
+
       </ul>
       <!-- sidebar menu end-->
     </div>
