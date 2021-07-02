@@ -1,18 +1,16 @@
 from django.shortcuts import render
-
-# Create your views here.
-from django.shortcuts import render
 from .models import Stock
 from .forms import StocksForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
 # Create your views here.
 
 
+@login_required
 def stocks_view(request):
     context = {'title': '库存清单'}
     stocks_list = Stock.objects.all()
@@ -24,6 +22,7 @@ def stocks_view(request):
     return render(request, 'stocks.html', context)
 
 
+@login_required
 def add_stocks(request, stocks_id):
     if str(stocks_id) == '0':
         context = {'title': '添加库存'}
@@ -50,12 +49,14 @@ def add_stocks(request, stocks_id):
     return render(request, 'add_stocks.html', context)
 
 
+@login_required
 def delete_stocks(request, stocks_id):
     stocks = Stock.objects.get(pk=stocks_id)
     stocks.delete()
     return HttpResponseRedirect(reverse('stocks'))
 
 
+@login_required
 def search_stocks(request):
     search = request.GET.get('search')
     error_msg = ''
@@ -64,7 +65,7 @@ def search_stocks(request):
         error_msg = '请输入关键词'
 
     stocks_list = Stock.objects.filter(
-        Q(s_id__icontains=search) | Q(s_num__icontains=search) | Q(unit__icontains=search) | Q(g_id_id__g_id__icontains=search) | Q(sp_id_id__sp_id__icontains=search)  | Q(g_name__g_name__icontains=search))
+        Q(s_id__icontains=search) | Q(s_num__icontains=search) | Q(g_id__g_id__icontains=search) | Q(g_id__g_name__icontains=search) | Q(g_id__g_type__icontains=search) | Q(g_id__unit__icontains=search) | Q(sp_id__sp_id__icontains=search) | Q(sp_id__sp_name__icontains=search))
     paginator = Paginator(stocks_list, 10)
     page = request.GET.get('page')
     stocks = paginator.get_page(page)

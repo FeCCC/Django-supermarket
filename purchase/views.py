@@ -7,10 +7,12 @@ from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 
+@login_required
 def purchase_view(request):
     context = {'title': '进货清单'}
     purchase_list = Purchase.objects.all()
@@ -22,6 +24,7 @@ def purchase_view(request):
     return render(request, 'purchase.html', context)
 
 
+@login_required
 def add_purchase(request, purchase_id):
     if str(purchase_id) == '0':
         context = {'title': '商品进货'}
@@ -37,7 +40,7 @@ def add_purchase(request, purchase_id):
                     return HttpResponseRedirect(reverse('purchase'))
                 else:
                     stock = {}
-                    stock['g_id_id'] =form.data.get('g_id')
+                    stock['g_id_id'] = form.data.get('g_id')
                     print(form.data.get('p_num'))
                     stock['s_num'] = form.data.get('p_num')
                     stock['sp_id_id'] = form.data.get('sp_id')
@@ -67,12 +70,14 @@ def add_purchase(request, purchase_id):
     return render(request, 'add_purchase.html', context)
 
 
+@login_required
 def delete_purchase(request, purchase_id):
     purchase = Purchase.objects.get(pk=purchase_id)
     purchase.delete()
     return HttpResponseRedirect(reverse('purchase'))
 
 
+@login_required
 def search_purchase(request):
     search = request.GET.get('search')
     error_msg = ''
@@ -81,7 +86,7 @@ def search_purchase(request):
         error_msg = '请输入关键词'
 
     purchase_list = Purchase.objects.filter(
-        Q(p_id__icontains=search) | Q(p_num__icontains=search) | Q(p_price__icontains=search) | Q(g_id_id__g_id__icontains=search) | Q(sp_id_id__sp_id__icontains=search) | Q(st_id_id__st_id__icontains=search))
+        Q(p_id__icontains=search) | Q(p_num__icontains=search) | Q(p_price__icontains=search) | Q(g_id__g_id__icontains=search) | Q(g_id__g_name__icontains=search) | Q(g_id__unit__icontains=search) | Q(sp_id__sp_id__icontains=search) | Q(sp_id__sp_name__icontains=search) | Q(st_id__username__icontains=search))
     paginator = Paginator(purchase_list, 10)
     page = request.GET.get('page')
     purchase = paginator.get_page(page)

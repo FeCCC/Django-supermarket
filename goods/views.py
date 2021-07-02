@@ -5,10 +5,11 @@ from .models import Goods
 from .forms import GoodsForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
+@login_required
 def goods_view(request):
     goods_list = Goods.objects.all()
     paginator = Paginator(goods_list, 10)
@@ -20,6 +21,7 @@ def goods_view(request):
     return render(request, 'goods.html', context)
 
 
+@login_required
 def add_goods(request, goods_id):
     if str(goods_id) == '0':
         context = {'title': '添加商品'}
@@ -35,7 +37,7 @@ def add_goods(request, goods_id):
         context = {'title': '修改商品'}
         goods = Goods.objects.get(pk=goods_id)
         if request.method == 'POST':
-            form = GoodsForm(request.POST,instance=goods)
+            form = GoodsForm(request.POST, instance=goods)
             if form.is_valid():
                 form.save()
                 return HttpResponseRedirect(reverse('goods'))
@@ -46,11 +48,14 @@ def add_goods(request, goods_id):
     return render(request, 'add_goods.html', context)
 
 
-def delete_goods(request,goods_id):
+@login_required
+def delete_goods(request, goods_id):
     goods = Goods.objects.get(pk=goods_id)
     goods.delete()
     return HttpResponseRedirect(reverse('goods'))
 
+
+@login_required
 def search_goods(request):
     search = request.GET.get('search')
     error_msg = ''
@@ -58,7 +63,8 @@ def search_goods(request):
     if not search:
         error_msg = '请输入关键词'
 
-    goods_list = Goods.objects.filter(Q(g_type__icontains=search)|Q(g_name__icontains=search))
+    goods_list = Goods.objects.filter(Q(g_id__icontains=search) | Q(g_name__icontains=search) | Q(g_type__icontains=search) | Q(
+        g_name__icontains=search) | Q(unit__icontains=search) | Q(sp_id__sp_id__icontains=search) | Q(sp_id__sp_name__icontains=search))
     paginator = Paginator(goods_list, 10)
     page = request.GET.get('page')
     goods = paginator.get_page(page)

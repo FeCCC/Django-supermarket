@@ -4,12 +4,13 @@ from .forms import SuppliersForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
 # Create your views here.
 
 
+@login_required
 def suppliers_view(request):
     context = {'title': '供货商信息'}
     suppliers_list = Supplier.objects.all()
@@ -21,6 +22,7 @@ def suppliers_view(request):
     return render(request, 'suppliers.html', context)
 
 
+@login_required
 def add_suppliers(request, suppliers_id):
     if str(suppliers_id) == '0':
         context = {'title': '添加供货商'}
@@ -47,12 +49,14 @@ def add_suppliers(request, suppliers_id):
     return render(request, 'add_suppliers.html', context)
 
 
+@login_required
 def delete_suppliers(request, suppliers_id):
     suppliers = Supplier.objects.get(pk=suppliers_id)
     suppliers.delete()
     return HttpResponseRedirect(reverse('suppliers'))
 
 
+@login_required
 def search_suppliers(request):
     search = request.GET.get('search')
     error_msg = ''

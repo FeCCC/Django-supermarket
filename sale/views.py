@@ -5,14 +5,14 @@ from .forms import SalesForm
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
 from django.db.models import Q
 
 # Create your views here.
 
 
+@login_required
 def sales_view(request):
     context = {'title': '销售清单'}
     sales_list = Sale.objects.all()
@@ -24,6 +24,7 @@ def sales_view(request):
     return render(request, 'sales.html', context)
 
 
+@login_required
 def add_sales(request, sales_id):
     if str(sales_id) == '0':
         context = {'title': '商品进货'}
@@ -69,12 +70,14 @@ def add_sales(request, sales_id):
     return render(request, 'add_sales.html', context)
 
 
+@login_required
 def delete_sales(request, sales_id):
     sales = Sale.objects.get(pk=sales_id)
     sales.delete()
     return HttpResponseRedirect(reverse('sales'))
 
 
+@login_required
 def search_sales(request):
     search = request.GET.get('search')
     error_msg = ''
@@ -83,7 +86,7 @@ def search_sales(request):
         error_msg = '请输入关键词'
 
     sales_list = Sale.objects.filter(
-        Q(sa_id__icontains=search) | Q(s_num__icontains=search) | Q(s_price__icontains=search) | Q(g_id_id__g_id__icontains=search) | Q(sp_id_id__sp_id__icontains=search) | Q(st_id_id__st_id__icontains=search))
+        Q(sa_id__icontains=search) | Q(s_num__icontains=search) | Q(s_price__icontains=search) | Q(g_id__g_id__icontains=search) | Q(g_id__g_name__icontains=search) | Q(g_id__unit__icontains=search) | Q(st_id__username__icontains=search))
     paginator = Paginator(sales_list, 10)
     page = request.GET.get('page')
     sales = paginator.get_page(page)
