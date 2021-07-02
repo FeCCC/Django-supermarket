@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3><i class="fa fa-angle-right"></i>库存清单</h3>
+<div class="row mt">
+  <div class="col-lg-12">
+    <div class="content-panel">
+      
+      <h4>
+        <form method="get" action="{%url 'search_stocks'%}">
+          {% csrf_token %}
+          <div class="col-md-4"><input class="form-control" type="search" placeholder="搜索" name="search"></div>
+          <button class="btn btn-default" type="submit">搜索</button>
+          <a class="btn btn-success" href="{%url 'add_stocks' 0 %}">添加</a>
+          <a class="btn btn-info" href="{%url 'stocks'%}">重置</a>
+        </form>
+      </h4>
+
+      <section id="unseen">
+        {%if error_msg%}
+        <h3>{{ error_msg }}</h3>
+        {%else%}
+        <table class="table table-bordered table-striped table-condensed table-hover">
+          <thead>
+            <tr>
+              <th class="numeric">库存编号</th>
+              <th class="numeric">商品编号</th>
+              <th>商品名称</th>
+              <th>商品类型</th>
+              <th>库存数量</th>
+              <th>计量单位</th>
+              <th class="numeric">供货商编号</th>
+              <th>供货商名称</th>
+              <th>库存更新时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          {%for stock in stocks%}
+          <tr>
+            <td class="numeric">{{stock.s_id}}</td>
+            <td class="numeric">{{stock.g_id.g_id}}</td>
+            <td>{{stock.g_id.g_name}}</td>
+            <td>{{stock.g_id.g_type}}</td>
+            <td>{{stock.s_num}}</td>
+            <td>{{stock.g_id.unit}}</td>
+            <td class="numeric">{{stock.sp_id.sp_id}}</td>
+            <td class="numeric">{{stock.sp_id.sp_name}}</td>
+            <td>{{stock.s_time}}</td>
+            <td><a class="btn btn-primary btn-xs" href="{%url 'add_stocks' stock.s_id %}"><i class="fa fa-pencil"></i></a>
+              <a class="btn btn-danger btn-xs" href="{%url 'delete_stocks' stock.s_id %}"><i
+                  class="fa fa-trash-o"></i></a>
+            </td>
+          </tr>
+          {%endfor%}
+        </table>
+        <div class="row-fluid">
+          <div class="span6">
+            <div class="dataTables_paginate paging_bootstrap pagination">
+              <ul>
+                {%if search %}
+                {% if stocks.has_previous %}
+                <li class="prev"><a href="?search={{search}}&page={{ stocks.previous_page_number }}">← 上一页</a></li>
+                {% endif %}
+                {% for item in stocks.paginator.page_range %}
+                {% if stocks.number == item %}
+                <li class="active"><a href="?search={{search}}&page={{ item }}">{{ item }}</a></li>
+                {% else %}
+                <li><a href="?search={{search}}&page={{ item }}">{{ item }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if stocks.has_next %}
+                <li class="next"><a href="?search={{search}}&page={{ stocks.next_page_number }}">下一页 → </a></li>
+                {% endif %}
+                {%else%}
+                {% if stocks.has_previous %}
+                <li class="prev"><a href="?page={{ stocks.previous_page_number }}">← 上一页</a></li>
+                {% endif %}
+                {% for item in stocks.paginator.page_range %}
+                {% if stocks.number == item %}
+                <li class="active"><a href="?page={{ item }}">{{ item }}</a></li>
+                {% else %}
+                <li><a href="?page={{ item }}">{{ item }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if stocks.has_next %}
+                <li class="next"><a href="?page={{ stocks.next_page_number }}">下一页 → </a></li>
+                {% endif %}
+                {%endif%}
+              </ul>
+
+
+            </div>
+          </div>
+        </div>
+        {%endif%}
+      </section>
+    </div>
+    <!-- /content-panel -->
+  </div>
+  <!-- /col-lg-4 -->
+</div>
+{% endblock %}

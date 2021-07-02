@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3><i class="fa fa-angle-right"></i>商品信息</h3>
+<div class="row mt">
+  <div class="col-lg-12">
+    <div class="content-panel">
+      
+      <h4>
+        <form method="get" action="{%url 'search_goods'%}">
+          {% csrf_token %}
+          <div class="col-md-4"><input class="form-control" type="search" placeholder="搜索" name="search"></div>
+          <button class="btn btn-default" type="submit">搜索</button>
+          <a class="btn btn-success" href="{%url 'add_goods' 0 %}">添加</a>
+          <a class="btn btn-info" href="{%url 'goods'%}">重置</a>
+        </form>
+      </h4>
+
+      <section id="unseen">
+        {%if error_msg%}
+        <h3>{{ error_msg }}</h3>
+        {%else%}
+        <table class="table table-bordered table-striped table-condensed table-hover">
+          <thead>
+            <tr>
+              <th class="numeric">商品编号</th>
+              <th>商品名称</th>
+              <th>商品类型</th>
+              <th>计量单位</th>
+              <!-- <th class="numeric">进货价格</th> -->
+              <th class="numeric">供货商编号</th>
+              <th class="numeric">供货商名称</th>
+              <th >操作</th>
+            </tr>
+          </thead>
+          {%for good in goods%}
+          <tr>
+            <td class="numeric">{{good.g_id}}</td>
+            <td>{{good.g_name}}</td>
+            <td>{{good.g_type}}</td>
+            <td>{{good.unit}}</td>
+            <!-- <td class="numeric">{{good.p_price}}</td> -->
+            <td class="numeric">{{good.sp_id.sp_id}}</td>
+            <td>{{good.sp_id.sp_name}}</td>
+            <td><a class="btn btn-primary btn-xs" href="{%url 'add_goods' good.g_id %}"><i class="fa fa-pencil"></i></a>
+              <a class="btn btn-danger btn-xs" href="{%url 'delete_goods' good.g_id %}"><i
+                  class="fa fa-trash-o"></i></a>
+            </td>
+          </tr>
+          {%endfor%}
+        </table>
+        <div class="row-fluid">
+          <div class="span6">
+            <div class="dataTables_paginate paging_bootstrap pagination">
+              <ul>
+                {%if search %}
+                {% if goods.has_previous %}
+                <li class="prev"><a href="?search={{search}}&page={{ goods.previous_page_number }}">← 上一页</a></li>
+                {% endif %}
+                {% for item in goods.paginator.page_range %}
+                {% if goods.number == item %}
+                <li class="active"><a href="?search={{search}}&page={{ item }}">{{ item }}</a></li>
+                {% else %}
+                <li><a href="?search={{search}}&page={{ item }}">{{ item }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if goods.has_next %}
+                <li class="next"><a href="?search={{search}}&page={{ goods.next_page_number }}">下一页 → </a></li>
+                {% endif %}
+                {%else%}
+                {% if goods.has_previous %}
+                <li class="prev"><a href="?page={{ goods.previous_page_number }}">← 上一页</a></li>
+                {% endif %}
+                {% for item in goods.paginator.page_range %}
+                {% if goods.number == item %}
+                <li class="active"><a href="?page={{ item }}">{{ item }}</a></li>
+                {% else %}
+                <li><a href="?page={{ item }}">{{ item }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if goods.has_next %}
+                <li class="next"><a href="?page={{ goods.next_page_number }}">下一页 → </a></li>
+                {% endif %}
+                {%endif%}
+              </ul>
+
+
+            </div>
+          </div>
+        </div>
+        {%endif%}
+      </section>
+    </div>
+    <!-- /content-panel -->
+  </div>
+  <!-- /col-lg-4 -->
+</div>
+{% endblock %}

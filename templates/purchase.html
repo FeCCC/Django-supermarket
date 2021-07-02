@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3><i class="fa fa-angle-right"></i>进货清单</h3>
+<div class="row mt">
+  <div class="col-lg-12">
+    <div class="content-panel">
+      
+      <h4>
+        <form method="get" action="{%url 'search_purchase'%}">
+          {% csrf_token %}
+          <div class="col-md-4"><input class="form-control" type="search" placeholder="搜索" name="search"></div>
+          <button class="btn btn-default" type="submit">搜索</button>
+          <a class="btn btn-success" href="{%url 'add_purchase' 0 %}">添加</a>
+          <a class="btn btn-info" href="{%url 'purchase'%}">重置</a>
+        </form>
+      </h4>
+
+      <section id="unseen">
+        {%if error_msg%}
+        <h3>{{ error_msg }}</h3>
+        {%else%}
+        <table class="table table-bordered table-striped table-condensed table-hover">
+          <thead>
+            <tr>
+              <th class="numeric">进货编号</th>
+              <th class="numeric">商品编号</th>
+              <th>商品名称</th>
+              <th class="numeric">进货数量</th>
+              <th>进货价格</th>
+              <th>计量单位</th>
+              <th class="numeric">供货商编号</th>
+              <th >供货商名称</th>
+              <th >操作员工</th>
+              <th>进货时间</th>
+            </tr>
+          </thead>
+          {%for pur in purchase%}
+          <tr>
+            <td class="numeric">{{pur.p_id}}</td>
+            <td class="numeric">{{pur.g_id.g_id}}</td>
+            <td>{{pur.g_id.g_name}}</td>
+            <td>{{pur.p_num}}</td>
+            <td>{{pur.p_price}}￥</td>
+            <td >{{pur.g_id.unit}}</td>
+            <td>{{pur.sp_id.sp_id}}</td>
+            <td>{{pur.sp_id.sp_name}}</td>
+            <td>{{pur.st_id.username}}</td>
+            <td>{{pur.p_time}}</td>
+            <td><a class="btn btn-primary btn-xs" href="{%url 'add_purchase' pur.p_id %}"><i class="fa fa-pencil"></i></a>
+              <a class="btn btn-danger btn-xs" href="{%url 'delete_purchase' pur.p_id %}"><i
+                  class="fa fa-trash-o"></i></a>
+            </td>
+          </tr>
+          {%endfor%}
+        </table>
+        <div class="row-fluid">
+          <div class="span6">
+            <div class="dataTables_paginate paging_bootstrap pagination">
+              <ul>
+                {%if search %}
+                {% if purchase.has_previous %}
+                <li class="prev"><a href="?search={{search}}&page={{ purchase.previous_page_number }}">← 上一页</a></li>
+                {% endif %}
+                {% for item in purchase.paginator.page_range %}
+                {% if purchase.number == item %}
+                <li class="active"><a href="?search={{search}}&page={{ item }}">{{ item }}</a></li>
+                {% else %}
+                <li><a href="?search={{search}}&page={{ item }}">{{ item }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if purchase.has_next %}
+                <li class="next"><a href="?search={{search}}&page={{ purchase.next_page_number }}">下一页 → </a></li>
+                {% endif %}
+                {%else%}
+                {% if purchase.has_previous %}
+                <li class="prev"><a href="?page={{ purchase.previous_page_number }}">← 上一页</a></li>
+                {% endif %}
+                {% for item in purchase.paginator.page_range %}
+                {% if purchase.number == item %}
+                <li class="active"><a href="?page={{ item }}">{{ item }}</a></li>
+                {% else %}
+                <li><a href="?page={{ item }}">{{ item }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if purchase.has_next %}
+                <li class="next"><a href="?page={{ purchase.next_page_number }}">下一页 → </a></li>
+                {% endif %}
+                {%endif%}
+              </ul>
+
+
+            </div>
+          </div>
+        </div>
+        {%endif%}
+      </section>
+    </div>
+    <!-- /content-panel -->
+  </div>
+  <!-- /col-lg-4 -->
+</div>
+{% endblock %}

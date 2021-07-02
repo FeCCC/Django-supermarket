@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="form-panel">
+  {%if stocks%}
+  <form role="form" class="form-horizontal style-form" action="{%url 'add_stocks' stocks.s_id%}" method="post" name="addstocks">
+  {%else%}
+  <form role="form" class="form-horizontal style-form" action="{%url 'add_stocks' 0%}" method="post" name="addstocks">
+  {%endif%}
+    {% csrf_token %}
+    {% for field in form %}
+    {% if field.errors %}
+
+    <div class="form-group has-error">
+      <label class="col-lg-2 control-label">{{field.label_tag}}</label>
+      <div class="col-md-4">
+        {{field}}
+        <p class="help-block">{% for error in field.errors %}
+          <label>{{ error|escape }} </label>
+          {% endfor %}
+        </p>
+      </div>
+    </div>
+    {% else %}
+    <div class="form-group">
+      <label class="col-lg-2 control-label">{{field.label_tag}}</label>
+      <div class="col-md-4">
+        {{field}}
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <div class="form-group">
+      <div class="col-lg-offset-2 col-lg-10">
+        <button class="btn btn-theme" type="submit">提交</button>
+      </div>
+    </div>
+  </form>
+  
+
+</div>
+
+{% endblock %}
