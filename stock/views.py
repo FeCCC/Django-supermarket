@@ -12,7 +12,7 @@ from django.db.models import Q
 
 @login_required
 def stocks_view(request):
-    context = {'title': '库存清单'}
+    context = {'title': '库存列表'}
     stocks_list = Stock.objects.all()
     paginator = Paginator(stocks_list, 10)
 
